@@ -10,7 +10,7 @@
       "./pages/**/*",
       "./node_modules/**/*"
     ],
-    "appId": "com.sorrycc.umi-example-electron",
+    "appId": "lzz.lzz-ui-editor",
     "asar": false
   },
   "scripts": {
@@ -28,8 +28,10 @@
   },
   "dependencies": {
     "antd": "^3.12.1",
+    "dexie": "^2.0.4",
     "dva": "^2.5.0-beta.2",
     "react": "^16.7.0",
+    "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.7.0"
   },
   "devDependencies": {

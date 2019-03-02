@@ -1,6 +1,8 @@
 
 // ref: https://umijs.org/config/
 export default {
+  publicPath: './static/',
+  outputPath: '../../app/dist/renderer',
   treeShaking: true,
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html
@@ -9,7 +11,7 @@ export default {
       dva: true,
       dynamicImport: false,
       title: 'renderer',
-      dll: false,
+      dll: true,
       routes: {
         exclude: [
         
@@ -23,4 +25,27 @@ export default {
       },
     }],
   ],
+  disableCSSModules:true,
+  externals(context, request, callback) {
+    const isDev = process.env.NODE_ENV === 'development';
+    let isExternal = false;
+    const load = [
+      'electron',
+      'fs',
+      'path',
+      'os',
+      'url',
+      'child_process'
+    ];
+    if (load.includes(request)) {
+      isExternal = `require("${request}")`;
+    }
+    const appDeps = Object.keys(require('../../app/package').dependencies);
+    if (appDeps.includes(request)) {
+      const orininalPath = slash(join(__dirname, '../../app/node_modules', request));
+      const requireAbsolute = `require('${orininalPath}')`;
+      isExternal = isDev ? requireAbsolute : `require('${request}')`;
+    }
+    callback(null, isExternal);
+  },
 }
