@@ -1,0 +1,77 @@
+.lz-control-source--components {
+  height: 100%;
+  background-color: unset;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .lz-scroll-container {
+    flex:1;
+  }
+
+  .ant-collapse {
+    background-color: unset;
+  }
+  .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+    line-height: 12px;
+  }
+  .ant-collapse > .ant-collapse-item > .ant-collapse-header .arrow {
+    line-height: 36px;
+  }
+  .ant-collapse-borderless > .ant-collapse-item {
+    border-bottom: none;
+  }
+  .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+    // color: @global-font-color;
+    // background-color: @part-collapse-header-color;
+    color: #515159;
+    //background-color: @part-collapse-header-color;
+    background-color: #f3f3f3;
+  }
+  .ant-collapse-content {
+    //color: @global-font-color;
+    color: #515159;
+  }
+
+  .ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content {
+    //background-color: @layout-sider-content;
+    background-color: #ebebeb;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+  }
+  .ant-collapse-borderless
+    > .ant-collapse-item
+    > .ant-collapse-content
+    > .ant-collapse-content-box {
+    padding-top: 16px;
+  }
+}
+
+.lz-control-source--component-info {
+  text-align: center;
+  border-radius: 2px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  transition-duration: 0.3s;
+  cursor: grab;
+
+  &:hover {
+    background-color: #f3f3f3;
+    box-shadow: 0 0 1px #333333;
+  }
+  .anticon {
+    font-size: 28px;
+    display: block;
+  }
+}
+
+.lz-control-source--divider.ant-divider-horizontal.ant-divider-with-text {
+  margin: 0;
+  margin-top: 10px;
+  color: #808080;
+
+  &::after,
+  &::before {
+    border-top-color: #ddd;
+  }
+}

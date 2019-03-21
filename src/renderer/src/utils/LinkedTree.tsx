@@ -118,21 +118,25 @@ function copy<P>(tree:LinkedTree):LinkedTree<P>{
     });
 }
 
-function eachTreeChildren(tree:LinkedTree,handle:(current:LinkedTree|null,children:any[],prev?:any)=>any,prev?:any):any{
-    let subTree:LinkedTree|null=tree._firstChild,children:any[]=[];
-    while(subTree){
-        prev=eachTreeChildren(subTree,handle,prev);
+function eachTreeChildren(tree:LinkedTree,handle:(current:LinkedTree|null,children:any[],prev?:any)=>any,prev?:any,breakFn?:(current:LinkedTree|null)=>boolean):any{
+    let subTree:LinkedTree|null=tree._firstChild,children:any[]=[],isNext=true;
+    if(breakFn)isNext=!breakFn(tree);
+    while(isNext&&subTree){
+        prev=eachTreeChildren(subTree,handle,prev,breakFn);
         subTree = subTree._next;
-        if(prev)children.push(prev);
+        if(prev) children.push(prev);
     }
     return handle(tree,children,prev);
 }
 
-function eachTreeParent(tree:LinkedTree,handle:(current:LinkedTree,parent?:any)=>any,parent?:any):void{
+function eachTreeParent(tree:LinkedTree,handle:(current:LinkedTree,parent?:any)=>any,parent?:any,breakFn?:(current:LinkedTree|null)=>boolean):void{
     let subTree:LinkedTree|null=tree._firstChild;
     parent=handle(tree,parent);
-    while(subTree){
-        eachTreeParent(subTree,handle,parent);
+
+    let isNext=true;
+    if(breakFn) isNext=!breakFn(tree);
+    while(isNext&&subTree){
+        eachTreeParent(subTree,handle,parent,breakFn);
         subTree=subTree._next;
     }
 }
@@ -172,19 +176,15 @@ export default class LinkedTree<P={}> {
     get Parent(){return this._parent;}
     get HasParent(){return this._parent?true:false}
     get Children(){return this._children;}
+    get Prev(){return this._prev;}
+    get Next(){return this._next;}
     get IsLeaf(){return this._children.length===0;}
     get Length(){return this._children.length;}
 
     //=================== Constructor =====================
-    constructor(data?:P|string,parent?:LinkedTree){
+    constructor(data?:P,parent?:LinkedTree){
         this._id=GenerateUUID();
-        if(data){
-            if(typeof data==='string'){
-                this.ParseLinkedTreeString(data);
-            }else{
-                this.Data=data;
-            }
-        }
+        if(data) this.Data=data;
         if(parent) parent.AddLast(this);
     }
 
@@ -209,8 +209,8 @@ export default class LinkedTree<P={}> {
      * Adds the new tree before the specified existing trees 
      * that filtering from 'fn' parameter in children of this
      */
-    AddBefore(tree:LinkedTree,fn):void{}
-    AddAfter(tree:LinkedTree,fn):void{}
+    // AddBefore(tree:LinkedTree,fn):void{}
+    // AddAfter(tree:LinkedTree,fn):void{}
 
     //=================== Move =====================
     private _moveToChildren(tree:LinkedTree){
@@ -318,14 +318,15 @@ export default class LinkedTree<P={}> {
         }
     }
 
-    //=================== DataFormat =====================
+    //=================== ParseData =====================
     /**
      * format: {Data:{},Children:[ {Data:{},Children:[]},{Data:{},Children:[]} ]}
      */
-    ToLinkedTreeJSON(format?:(data:P)=>any){
-        return JSON.stringify(eachTreeChildren(this,(current:LinkedTree<P>,childen:any[])=>{
-            return {data:format?format(current.Data):current.Data,children:childen};
-        }));
+    ToITreeStructure(format?:(data:P)=>ITreeStructure<P>,toJSON?:boolean){
+        const result= eachTreeChildren(this,(current:LinkedTree<P>,childen:any[])=>{
+            return {Data:format?format(current.Data):current.Data,Children:childen};
+        });
+        return toJSON?JSON.stringify(result):result;
     }
 
     /**
@@ -334,10 +335,11 @@ export default class LinkedTree<P={}> {
      *       if 'false' the new data being appended to the end of root's children
      * format:the specified data converts to the specified generics (type of LinkedTedd.Data)
      */
-    ParseLinkedTreeString(treeDataStr:string,cover:boolean=false,format?:(data:any)=>P){
+    ParseITreeStructure(treeData:string|ITreeStructure<P>,cover?:boolean,format?:(data:any)=>P){
         try{
-            let treeData:ITreeStructure=JSON.parse(treeDataStr) as ITreeStructure,root=this;
-            if(cover){root.Clear()}
+            if(typeof treeData==='string') treeData=JSON.parse(treeData) as ITreeStructure<P>;
+            if(cover) this.Clear();
+            let root=this;
             RecursionHandle(treeData,(current:any,parent?:LinkedTree)=>{
                 let data:P=format?format(current.Data):current.Data as P;
                 if(parent){
@@ -353,12 +355,12 @@ export default class LinkedTree<P={}> {
     }
 
     //=================== Other =====================
-    ForEach(fn:(current:LinkedTree,parent:any)=>any):any{
-        return eachTreeParent(this,fn);
+    ForEach(fn:(current:LinkedTree,parent:any)=>any,breakFn?:(current:LinkedTree)=>boolean):any{
+        return eachTreeParent(this,fn,null,breakFn);
     }
 
-    ForEachStartLeaf(fn:(current:LinkedTree,childen:any[],prev?:any)=>any):any{
-        return eachTreeChildren(this,fn);
+    ForEachStartLeaf(fn:(current:LinkedTree,childen:any[],prev?:any)=>any,breakFn?:(current:LinkedTree)=>boolean):any{
+        return eachTreeChildren(this,fn,null,breakFn);
     }
 
     Find(fn:(tree:LinkedTree)=>boolean,all:boolean):LinkedTree[]|undefined{

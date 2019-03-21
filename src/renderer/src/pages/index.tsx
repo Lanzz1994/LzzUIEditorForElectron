@@ -1,13 +1,16 @@
 import React from 'react';
+import {connect} from 'dva'
 import { List, Card, Icon, Modal, Input, Button, Spin, message } from 'antd';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { IconFont, UploadImage } from '@/components/Common';
-import Db from '@/database/Database'
-import {IProject} from '@/database/DbEntity'
+import {ProjectBusiness} from '@/access/DbBusiness'
+import {IProject} from '@/access/DbEntity'
+import {GenerateComponentData,GenerateProjectData} from '@/access/GenerateData'
 import './index.less';
 
 const Meta = Card.Meta;
 
+@connect((state)=>state)
 export default class Index extends React.Component<any> {
   state = {
     Projects:[],
@@ -19,23 +22,22 @@ export default class Index extends React.Component<any> {
     loading:true
   }
 
-  constructor(props){
-    super(props);
-  }
-
   componentDidMount(){
-    //Db.Projects
-    // .toArray().then((Projects)=>{
-    //   this.setState({Projects,loading:false});
-    // }).catch(()=>{
-    //   message.warning('项目列表加载异常');
-    //   this.setState({loading:false})
-    // });
+
+    // GenerateProjectData();
+    // GenerateComponentData();
+
+    ProjectBusiness.GetAll()
+    .then((Projects)=>{this.setState({Projects,loading:false})})
+    .catch((err)=>{
+      message.warning('项目列表加载异常');
+      this.setState({loading:false});
+    });
   }
 
   //======= createModal ========
   createModalOK = () => {this.createModalClear();}
-  createModalCancel = () => {this.createModalClear();}
+  createModalCancel = () => { this.createModalClear(); }
   //关闭创建项目窗口，根据参数刷新项目列表
   createModalClear = async (args?:{msg:string,reload?:boolean}) => {
     let changes={ 
@@ -45,7 +47,7 @@ export default class Index extends React.Component<any> {
     };
     if(args){
       message.info(args.msg);
-      if(args.reload) await Db.Projects.toArray(projs=>{
+      if(args.reload) await ProjectBusiness.GetAll().then(projs=>{
         changes["Projects"]=projs;
       });
     }
@@ -53,35 +55,37 @@ export default class Index extends React.Component<any> {
   }
   //创建一个项目
   createProject = () => {
-    Db.Projects.add({
-      Name:this.state.ProjectName,
-      Description:this.state.ProjectDesc,
-      ProjectImage:""
-    }).then(key=>this.createModalClear({msg:'添加成功',reload:true}))
+    ProjectBusiness.Add({
+      Description:{
+        Name:this.state.ProjectName,
+        Remark:this.state.ProjectDesc
+      }
+    })
+    .then(key=>this.createModalClear({msg:'添加成功',reload:true}))
     .catch(()=>this.createModalClear({msg:'添加项目信息异常'}));
   }
   //删除项目操作
-  deleteProject=(proj:IProject)=>{
+  deleteProject=(project:IProject)=>{
     Modal.confirm({
       title: '删除提示',
       content: '删除后项目所用的资源和项目的关联将无法恢复，是否删除',
       okText: '删除',
       okType: 'danger',
       cancelText: '取消',
-      async onOk() {
-        console.log(proj);
+      onOk:()=> {
         //删除项目下的独立子资源（项目页面，专属模板等）
-        // Db.transaction("rw",Db.Pages,Db.Projects,Db.Projects,async ()=>{
-          
-        // });
+        ProjectBusiness.Delete(project.ID)
+        .then(()=>{message.info("删除成功")})
+        .catch((err)=>{message.warning("删除异常")})
+        .finally(()=>{ProjectBusiness.GetAll().then(Projects=>this.setState({Projects}))});
       }
     });
   }
 
   //======= projectEditor ========
   projectSetting=()=>{}
-  projectEdit=(EditProject)=>{
-    location.href='./editor?id='+EditProject.id;
+  projectEdit=(EditProject:IProject)=>{
+    location.hash='/editor?id='+EditProject.ID;
   }
   projectMore=()=>{}
 
@@ -89,13 +93,13 @@ export default class Index extends React.Component<any> {
     let {Projects,ProjectName,ProjectDesc,loading}=this.state;
     let projs=Projects.map((project:IProject,index)=>
       <Card key={index}
-        cover={<img src={project.ProjectImage||"https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"}/>}
+        cover={<img src={project.Description.Image||"https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"}/>}
         actions={[
           <Icon type="setting" />, 
           <Icon type="edit" onClick={()=>{this.projectEdit(project)}}/>, 
           <Icon type="delete" onClick={()=>{this.deleteProject(project)}}/>]} size="small" hoverable={true}
       >
-        <Meta title={project.Name||'项目名称'} description={project.Description||'项目描述...'} />
+        <Meta title={project.Description.Name||'项目名称'} description={project.Description.Remark||'项目描述...'} />
       </Card>
     );
     const welcomeList = [

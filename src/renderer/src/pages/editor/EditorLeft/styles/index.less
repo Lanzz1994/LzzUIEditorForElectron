@@ -1,0 +1,72 @@
+.lz-control-source {
+  height: 100%;
+  background-color: unset;
+
+  .ant-tabs {
+    height: 100%;
+  }
+
+  .ant-tabs-nav-container {
+    padding-top: 12px;
+  }
+
+  //调整Tab组件的内边距
+  .ant-tabs-vertical > .ant-tabs-bar .ant-tabs-tab {
+    padding: 8px 12px;
+    //color: @global-font-color;
+    color: #515159;
+    //margin-bottom:8px;
+  }
+
+  .ant-tabs-vertical > .ant-tabs-bar .ant-tabs-tab:first {
+    margin-top: 12px;
+  }
+
+  .ant-tabs-vertical.ant-tabs-left > .ant-tabs-content {
+    padding-left: 0;
+    //border-left:1px solid @global-splitbar-color;
+    border-left: 1px solid #d9d9d9;
+    height: 100%;
+  }
+
+  //调整标签页组件 竖线标识 为背景色
+  .ant-tabs-vertical.ant-tabs-left > .ant-tabs-bar .ant-tabs-ink-bar {
+    right: 0;
+    width: 100%;
+    z-index: 0;
+    //background-color: @part-state-color;
+    background-color: rgba(221, 221, 221, 0.5);
+  }
+
+  //还原竖线
+  .ant-tabs-vertical.ant-tabs-left > .ant-tabs-bar .ant-tabs-ink-bar::after {
+    content: '';
+    width: 3px;
+    height: 37px;
+    position: absolute;
+    left: 0;
+    background-color: #1890ff;
+  }
+
+  //Tab组件边框线
+  .ant-tabs-vertical.ant-tabs-left > .ant-tabs-bar {
+    //border-right:1px solid @global-splitbar-color;
+    border-right: 1px solid #d9d9d9;
+  }
+
+  .ant-tabs-vertical > .ant-tabs-bar .ant-tabs-tab.ant-tabs-tab-active {
+    color: #0084ff;
+  }
+
+  .ant-tabs-tabpane{
+    padding:10px;
+    height:100%;
+  }
+}
+
+.ant-layout-sider-collapsed .lz-control-source .ant-tabs {
+  overflow: hidden !important;
+}
+
+@import './PageList.less';
+@import './ComponentLibrary.less';

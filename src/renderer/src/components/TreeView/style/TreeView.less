@@ -1,0 +1,44 @@
+.lz-treeview{
+    height:inherit;
+    display: flex;
+    flex-direction: column;
+}
+
+.lz-treeview--search{
+    margin-bottom: 8px;
+}
+
+.lz-treeview--nodes-wraper{
+    flex:1;
+
+    .ant-tree-node-content-wrapper{
+        position: relative;
+
+        &:hover .lz-treeview--node-action{
+            opacity: 1;
+            pointer-events:auto;
+        }
+    }
+
+    .lz-treeview--node-action {
+        float: right;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s;
+    }
+}
+
+.lz-treeview--batch{
+    text-align: right;
+}
+
+.lz-treeview-empty{
+    width:100%;
+    height:50px;
+    text-align: center;
+    color:#ccc;
+    position: absolute;
+    top:0;
+    bottom:0;
+    margin:auto;
+}

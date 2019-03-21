@@ -2,14 +2,8 @@ import { create, getPath } from './window';
 import fs from 'fs';
 
 export function init() {
-  const win = create({ width: 1090, height: 720 });
+  const win = create({ width: 1090, height: 720, minWidth:1024, minHeight:768 });
   win.loadURL(getPath());
-
-  // fs.rmdir("D:/Program/MyProgram/Github/LzzUIEditorForElectron/projects/ProjectTemplate",function(err,files){
-  //   console.log(err,files);
-  // });
-  readDirSync('D:/Program/MyProgram/Github/LzzUIEditorForElectron/projects/ProjectTemplate');
-
 }
 
 

@@ -1,15 +1,16 @@
 
 // ref: https://umijs.org/config/
 export default {
-  publicPath: './static/',
+  publicPath: './',
   outputPath: '../../app/dist/renderer',
+  history: 'hash',
   treeShaking: true,
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html
     ['umi-plugin-react', {
       antd: true,
       dva: true,
-      dynamicImport: false,
+      dynamicImport: true,
       title: 'renderer',
       dll: true,
       routes: {
