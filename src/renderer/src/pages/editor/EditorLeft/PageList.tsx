@@ -24,8 +24,7 @@ export default class PageList extends React.PureComponent<any>{
     }
 
     render(){
-        const {PageList}=this.state;
-
+        const { InterfaceCore } = this.props;
         return (
             <div className="lz-control-source--page-list">
                 <Button size="small" icon="plus" type="ghost">添加新的页面</Button>
@@ -34,7 +33,7 @@ export default class PageList extends React.PureComponent<any>{
                     labelField="Name" 
                     searchInputProps={{size:'small'}}
                     renderTreeNodeTip={()=><span>title</span>} 
-                    dataSrouce={PageList}
+                    dataSrouce={InterfaceCore.Pages}
                     renderTreeNodeAction={()=><React.Fragment><Icon type="close"/></React.Fragment>} />
             </div>
         );

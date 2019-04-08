@@ -7,7 +7,6 @@ import { ProjectBusiness } from '@/access/DbBusiness';
 import EditorLeft from './EditorLeft'
 import './style/index.less'
 
-
 const {Header,Sider,Content}=Layout;
 
 @connect(state => state)
@@ -17,14 +16,18 @@ export default class GUIEditor extends React.PureComponent<any> {
     }
 
     componentDidMount(){
-        const projID=location.hash.split('?')[1].split('=')[1];
-        if(projID){
-            // ProjectBusiness.Get(parseInt(projID)).then(Project=>{
+        const ProjectID=location.hash.split('?')[1].split('=')[1];
+        if(ProjectID){
+            // ProjectBusiness.Get(parseInt(ProjectID)).then(Project=>{
             //     this.props.dispatch({type:'InterfaceCore/UpdateStates',updateStates:{Project}});
                 
             //     this.setState({EditorLeft:<EditorLeft />})
                 
             // }).catch(()=>message.warning('未获取到项目信息'))
+            this.props.dispatch({
+                type:"InterfaceCore/InitInterfaceAsync",
+                payload:{ ProjectID }
+            });
         }
     }
 
@@ -42,11 +45,11 @@ export default class GUIEditor extends React.PureComponent<any> {
                     </Header>
                     <DragDropBoard>
                         <Layout className="lz-ui-work-area">
-                            <Sider className="lz-ui-left" width="294"><EditorLeft/></Sider>
+                            <Sider className="lz-ui-left" width="294"><EditorLeft /></Sider>
                             <Layout>
                             <Scrollbars autoHide>
                                 <Content className="lz-ui-center-wraper">
-                                    <div className="lz-ui-center">
+                                    <div className="lz-ui-center">i
                                         <div>Grid-Rule</div>
                                     </div>
                                 </Content>

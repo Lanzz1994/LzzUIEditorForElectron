@@ -19,12 +19,12 @@ export default class ComponentLibrary extends React.PureComponent{
     }
 
     componentDidMount(){
-        // ComponentLibraryBusiness.GetAll().then((ComponentLibraries)=>{
-        //     const HtmlLibrary=ComponentLibraries.shift();
-        //     ComponentBusiness.GetByComponentLibrary(HtmlLibrary).then((HtmlComponents)=>{this.setState({HtmlComponents})});
-        //     if(ComponentLibraries[0]) this.loadComponents(ComponentLibraries[0].Key,ComponentLibraries[0]);
-        //     this.setState({ComponentLibraries});
-        // });
+        ComponentLibraryBusiness.GetAll().then((ComponentLibraries)=>{
+            const HtmlLibrary=ComponentLibraries.shift();
+            ComponentBusiness.GetByComponentLibrary(HtmlLibrary).then((HtmlComponents)=>{this.setState({HtmlComponents})});
+            if(ComponentLibraries[0]) this.loadComponents(ComponentLibraries[0].Key,ComponentLibraries[0]);
+            this.setState({ComponentLibraries});
+        });
     }
 
     loadComponents=(currentLibrary:string,library:IComponentLibrary)=>{
